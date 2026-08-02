@@ -156,10 +156,15 @@
     input, textarea, select { background: transparent !important; }
     .party-box { background: transparent; }
     .checkbox-list input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    input.is-empty, textarea.is-empty {
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #000 5px, #000 6px) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
   }
   .toolbar {
     max-width: 830px;
-    margin: 0 auto 16px;
+    margin: 0 auto 6px;
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -175,13 +180,38 @@
     font-family: sans-serif;
   }
   .toolbar button.secondary { background: #6b6b6b; }
+  #autosave-status {
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 11.5px;
+    color: #777;
+    max-width: 830px;
+    margin: 0 auto 8px;
+  }
+  .privacy-notice {
+    max-width: 830px;
+    margin: 0 auto 16px;
+    background: #f0f4f8;
+    border: 1px solid #d7e0e8;
+    border-radius: 5px;
+    padding: 10px 16px;
+    font-family: sans-serif;
+    font-size: 11px;
+    color: #45566b;
+    line-height: 1.5;
+  }
+  .privacy-notice strong { color: #16223d; }
 </style>
 </head>
 <body>
 
 <div class="toolbar no-print">
-  <button onclick="window.print()">🖨️ Drucken / Als PDF speichern</button>
-  <button class="secondary" onclick="if(confirm('Alle Eingaben löschen?')){document.querySelectorAll('input[type=text],input[type=date],input[type=time],input[type=number],textarea').forEach(el=>el.value='');document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el=>el.checked=false);}">Formular leeren</button>
+  <button onclick="if(window.__markEmptyFields)window.__markEmptyFields();window.print()">🖨️ Drucken / Als PDF speichern</button>
+  <button class="secondary" id="clear-btn">Formular leeren</button>
+</div>
+<div id="autosave-status" class="no-print">Eingaben werden automatisch lokal gespeichert (30 Tage).</div>
+<div class="privacy-notice no-print">
+  <strong>Datenschutzhinweis gemäß DSGVO (Art. 13 DSGVO):</strong> Die von Ihnen eingegebenen Daten werden ausschließlich lokal im Speicher (Local Storage) Ihres Browsers auf Ihrem Endgerät abgelegt. Es findet <strong>keine Übertragung an einen Server</strong>, an den Ersteller dieser Vorlage oder an Dritte statt. Die Daten sind für maximal <strong>30 Tage</strong> ab der letzten Eingabe abrufbar und werden danach automatisch gelöscht. Sie können die gespeicherten Daten jederzeit über den Button „Formular leeren" selbst und vollständig löschen (Recht auf Löschung, Art. 17 DSGVO). Verantwortlicher für diese lokale Verarbeitung ist ausschließlich der Nutzer/die Nutzerin selbst, da die Daten sein/ihr Gerät nicht verlassen.
 </div>
 
 <div class="sheet">
@@ -329,6 +359,7 @@
 
 <h2>§ 12 Schlussbestimmungen</h2>
 <p>Änderungen und Ergänzungen dieses Vertrags bedürfen der Schriftform. Sollte eine Bestimmung dieses Vertrags unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen hiervon unberührt. Es gilt das Recht der Bundesrepublik Deutschland. Dieser Vertrag wurde in zweifacher Ausfertigung erstellt; jede Vertragspartei erhält ein von beiden Seiten unterschriebenes Exemplar.</p>
+<p class="legal-note"><strong>Hinweis:</strong> Nicht ausgefüllte Felder und Zeilen sind vor Unterschrift zu entwerten (z.&nbsp;B. durch Durchstreichen), um nachträgliche Ergänzungen zu verhindern.</p>
 
 <div class="signatures">
   <div class="sig-block">
@@ -342,5 +373,97 @@
 </div>
 
 </div>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'kfz_kaufvertrag_autosave_v1';
+  var EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 Tage
+  var statusEl = document.getElementById('autosave-status');
+  var storageAvailable = true;
+
+  function testStorage(){
+    try {
+      var t = '__test__';
+      localStorage.setItem(t, '1');
+      localStorage.removeItem(t);
+      return true;
+    } catch(e){ return false; }
+  }
+  storageAvailable = testStorage();
+
+  function getFields(){
+    return Array.from(document.querySelectorAll('.sheet input, .sheet textarea'));
+  }
+
+  function saveData(){
+    if(!storageAvailable) return;
+    try {
+      var fields = getFields();
+      var data = fields.map(function(el){
+        if(el.type === 'checkbox' || el.type === 'radio') return el.checked;
+        return el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ savedAt: Date.now(), data: data }));
+      if(statusEl) statusEl.textContent = 'Gespeichert ✓ (bleibt 30 Tage erhalten, auch nach Schließen der Seite)';
+    } catch(e){
+      if(statusEl) statusEl.textContent = 'Automatisches Speichern nicht verfügbar in dieser Ansicht.';
+    }
+  }
+
+  function loadData(){
+    if(!storageAvailable){
+      if(statusEl) statusEl.textContent = 'Automatisches Speichern ist in dieser Ansicht nicht verfügbar. Bitte die Datei herunterladen und im Browser (z. B. Safari) öffnen, damit Eingaben erhalten bleiben.';
+      return;
+    }
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      var parsed = JSON.parse(raw);
+      if(Date.now() - parsed.savedAt > EXPIRY_MS){
+        localStorage.removeItem(STORAGE_KEY);
+        return;
+      }
+      var fields = getFields();
+      fields.forEach(function(el, i){
+        if(parsed.data[i] === undefined) return;
+        if(el.type === 'checkbox' || el.type === 'radio') el.checked = parsed.data[i];
+        else el.value = parsed.data[i];
+      });
+      var d = new Date(parsed.savedAt);
+      if(statusEl) statusEl.textContent = 'Vorherige Eingaben wiederhergestellt (gespeichert am ' + d.toLocaleDateString('de-DE') + '). Daten werden 30 Tage lokal aufbewahrt.';
+    } catch(e){
+      console.error(e);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadData);
+  document.addEventListener('input', saveData);
+  document.addEventListener('change', saveData);
+
+  function markEmptyFields(){
+    document.querySelectorAll('.sheet input[type=text], .sheet input[type=date], .sheet input[type=time], .sheet textarea').forEach(function(el){
+      if(!el.value || el.value.trim() === ''){
+        el.classList.add('is-empty');
+      } else {
+        el.classList.remove('is-empty');
+      }
+    });
+  }
+  window.addEventListener('beforeprint', markEmptyFields);
+  window.__markEmptyFields = markEmptyFields;
+
+  document.getElementById('clear-btn').addEventListener('click', function(){
+    if(confirm('Alle Eingaben löschen?')){
+      document.querySelectorAll('.sheet input[type=text], .sheet input[type=date], .sheet input[type=time], .sheet textarea').forEach(function(el){ el.value = ''; });
+      document.querySelectorAll('.sheet input[type=checkbox], .sheet input[type=radio]').forEach(function(el){ el.checked = false; });
+      if(storageAvailable){
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+      }
+      if(statusEl) statusEl.textContent = 'Formular geleert. Eingaben werden automatisch lokal gespeichert (30 Tage).';
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
