@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Kaufvertrag für ein gebrauchtes Kraftfahrzeug</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Georgia", "Times New Roman", serif;
+    color: #1a1a1a;
+    max-width: 830px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+    line-height: 1.5;
+    font-size: 13.5px;
+    background: #f4f4f2;
+  }
+  .sheet {
+    background: #fff;
+    padding: 40px 48px 60px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.08);
+  }
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    margin: 0 0 4px;
+    color: #16223d;
+  }
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    font-size: 12.5px;
+    margin-bottom: 16px;
+  }
+  hr.top {
+    border: none;
+    border-top: 1px solid #bbb;
+    margin: 0 0 22px;
+  }
+  h2 {
+    font-size: 14.5px;
+    color: #16223d;
+    border-bottom: 1.5px solid #16223d;
+    padding-bottom: 4px;
+    margin: 26px 0 10px;
+  }
+  h3 {
+    font-size: 13px;
+    color: #16223d;
+    margin: 14px 0 6px;
+  }
+  p { margin: 6px 0; }
+  .legal-note { font-size: 11.5px; color: #666; }
+
+  input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
+    font-family: inherit;
+    font-size: 13px;
+    border: none;
+    border-bottom: 1px solid #000;
+    background: #fbfbf5;
+    padding: 3px 4px;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus { background: #fff6d9; }
+  textarea {
+    width: 100%;
+    resize: vertical;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 7px 0;
+  }
+  .field-row .label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .field-row input { flex: 1 1 auto; width: 100%; }
+  .two-col { display: flex; gap: 24px; }
+  .two-col .field-row { flex: 1; }
+  .three-col { display: flex; gap: 18px; }
+  .three-col .field-row { flex: 1; }
+
+  .party-box {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 8px 0 16px;
+    background: #fafafa;
+  }
+  .party-box h3 { margin-top: 0; }
+
+  .checkbox-list label {
+    display: block;
+    margin: 5px 0 5px 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .checkbox-list input[type="checkbox"] {
+    width: 13px;
+    height: 13px;
+    margin-right: 7px;
+    vertical-align: middle;
+  }
+  .inline-input {
+    border: none;
+    border-bottom: 1px solid #000;
+    background: #fbfbf5;
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 2px 4px;
+  }
+
+  .radio-row { display: flex; gap: 22px; align-items: center; margin: 6px 0 6px 4px; }
+  .radio-row label { font-size: 13px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+  ol.numbered { margin: 6px 0 6px 20px; padding: 0; }
+  ol.numbered li { margin: 4px 0; }
+
+  .signatures {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 50px;
+  }
+  .sig-block {
+    flex: 1;
+    border-top: 1px solid #000;
+    padding-top: 6px;
+  }
+  .sig-block .place-date {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 11.5px;
+    color: #666;
+    margin-bottom: 40px;
+  }
+  .sig-block .place-date input { font-size: 11.5px; flex: 1; }
+  .sig-label { font-size: 12.5px; }
+
+  @media print {
+    body { padding: 0; background: #fff; }
+    .sheet { box-shadow: none; padding: 0; }
+    .no-print { display: none; }
+    input, textarea, select { background: transparent !important; }
+    .party-box { background: transparent; }
+    .checkbox-list input[type="checkbox"], input[type="radio"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  .toolbar {
+    max-width: 830px;
+    margin: 0 auto 16px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .toolbar button {
+    padding: 8px 18px;
+    background: #16223d;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: sans-serif;
+  }
+  .toolbar button.secondary { background: #6b6b6b; }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button onclick="window.print()">🖨️ Drucken / Als PDF speichern</button>
+  <button class="secondary" onclick="if(confirm('Alle Eingaben löschen?')){document.querySelectorAll('input[type=text],input[type=date],input[type=time],input[type=number],textarea').forEach(el=>el.value='');document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el=>el.checked=false);}">Formular leeren</button>
+</div>
+
+<div class="sheet">
+
+<h1>KAUFVERTRAG FÜR EIN GEBRAUCHTES KRAFTFAHRZEUG</h1>
+<p class="subtitle">Verkauf zwischen Privatpersonen — orientiert am ADAC-Musterkaufvertrag</p>
+<hr class="top">
+
+<h2>§ 1 Vertragsparteien</h2>
+
+<div class="party-box">
+<h3>Verkäufer/in</h3>
+<div class="field-row"><span class="label">Name, Vorname:</span><input type="text"></div>
+<div class="field-row"><span class="label">Anschrift:</span><input type="text"></div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Telefon:</span><input type="text"></div>
+  <div class="field-row"><span class="label">E-Mail:</span><input type="text"></div>
+</div>
+<div class="field-row"><span class="label">Ausweis-/Personalausweisnr.:</span><input type="text"></div>
+</div>
+
+<div class="party-box">
+<h3>Käufer/in</h3>
+<div class="field-row"><span class="label">Name, Vorname:</span><input type="text"></div>
+<div class="field-row"><span class="label">Anschrift:</span><input type="text"></div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Telefon:</span><input type="text"></div>
+  <div class="field-row"><span class="label">E-Mail:</span><input type="text"></div>
+</div>
+<div class="field-row"><span class="label">Ausweis-/Personalausweisnr.:</span><input type="text"></div>
+</div>
+
+<p>Zwischen den vorgenannten Parteien wird nachfolgender Kaufvertrag über ein gebrauchtes Kraftfahrzeug geschlossen.</p>
+
+<h2>§ 2 Kaufgegenstand — Fahrzeugdaten</h2>
+<div class="two-col">
+  <div class="field-row"><span class="label">Hersteller/Marke:</span><input type="text"></div>
+  <div class="field-row"><span class="label">Modell/Typ:</span><input type="text"></div>
+</div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Fahrzeug-Ident-Nr. (FIN):</span><input type="text"></div>
+  <div class="field-row"><span class="label">Amtl. Kennzeichen:</span><input type="text"></div>
+</div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Erstzulassung:</span><input type="date"></div>
+  <div class="field-row"><span class="label">Kilometerstand:</span><input type="text" placeholder="km"></div>
+</div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Hubraum/Leistung:</span><input type="text"></div>
+  <div class="field-row"><span class="label">Kraftstoffart:</span><input type="text"></div>
+</div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Anzahl Vorbesitzer:</span><input type="text"></div>
+  <div class="field-row"><span class="label">HU/AU gültig bis:</span><input type="date"></div>
+</div>
+<div class="field-row"><span class="label">Fahrzeugfarbe:</span><input type="text"></div>
+
+<p class="legal-note">Der Kilometerstand entspricht nach Kenntnis des Verkäufers/der Verkäuferin dem tatsächlichen Gesamtfahrleistung des Fahrzeugs. Eine Garantie für die Richtigkeit des Kilometerstands wird nicht übernommen, sofern dem Verkäufer/der Verkäuferin keine Unrichtigkeit bekannt war.</p>
+
+<h2>§ 3 Kaufpreis und Zahlungsart</h2>
+<div class="field-row"><span class="label">Kaufpreis (in Worten):</span><input type="text"></div>
+<div class="two-col">
+  <div class="field-row"><span class="label">Kaufpreis (Zahl):</span><input type="text" placeholder="€"></div>
+  <div class="field-row"><span class="label">Zahlungsart:</span><input type="text"></div>
+</div>
+<p>Der Kaufpreis wird wie folgt entrichtet:</p>
+<div class="checkbox-list">
+  <label><input type="checkbox"> in bar bei Übergabe</label>
+  <label><input type="checkbox"> per Überweisung, Wertstellung vor Übergabe, am <input type="date" class="inline-input"></label>
+  <label><input type="checkbox"> Sonstiges: <input type="text" class="inline-input" style="width:280px;"></label>
+</div>
+
+<h2>§ 4 Übergabe des Fahrzeugs</h2>
+<div class="three-col">
+  <div class="field-row"><span class="label">Datum:</span><input type="date"></div>
+  <div class="field-row"><span class="label">Uhrzeit:</span><input type="time"></div>
+  <div class="field-row"><span class="label">Ort:</span><input type="text"></div>
+</div>
+<p>Mit der Übergabe gehen Besitz, Nutzen und Lasten sowie die Gefahr des zufälligen Untergangs und der zufälligen Verschlechterung des Fahrzeugs auf den Käufer/die Käuferin über.</p>
+
+<h2>§ 5 Übergebene Fahrzeugpapiere, Schlüssel, Zubehör</h2>
+<div class="checkbox-list">
+  <label><input type="checkbox"> Zulassungsbescheinigung Teil I (Fahrzeugschein)</label>
+  <label><input type="checkbox"> Zulassungsbescheinigung Teil II (Fahrzeugbrief)</label>
+  <label><input type="checkbox"> Anzahl Fahrzeugschlüssel: <input type="text" class="inline-input" style="width:50px;"></label>
+  <label><input type="checkbox"> Serviceheft/Scheckheft</label>
+  <label><input type="checkbox"> Bedienungsanleitung</label>
+  <label><input type="checkbox"> Bordwerkzeug/Wagenheber</label>
+  <label><input type="checkbox"> Ersatzrad/Reifenreparaturset</label>
+  <label><input type="checkbox"> Prüfbericht letzte HU/AU</label>
+  <label><input type="checkbox"> Sonstiges Zubehör: <input type="text" class="inline-input" style="width:280px;"></label>
+</div>
+
+<h2>§ 6 Besichtigung und Probefahrt</h2>
+<p>Der Käufer/die Käuferin bestätigt hiermit, das Fahrzeug vor Vertragsabschluss eingehend besichtigt und geprüft zu haben. Eine Probefahrt war möglich und wurde durchgeführt:</p>
+<div class="radio-row">
+  <label><input type="radio" name="probefahrt"> ja</label>
+  <label><input type="radio" name="probefahrt"> nein</label>
+</div>
+<p>Der Käufer/die Käuferin erklärt, den Zustand des Fahrzeugs, insbesondere Karosserie, Lack, Innenraum, Motor und Fahrverhalten, zur Kenntnis genommen und für seine/ihre Kaufentscheidung als ausreichend erachtet zu haben.</p>
+
+<h2>§ 7 Bekannte Mängel und Unfallschäden</h2>
+<p>Der Verkäufer/die Verkäuferin hat den Käufer/die Käuferin über folgende Mängel, Vorschäden bzw. Reparaturen informiert:</p>
+<textarea rows="3"></textarea>
+<div class="two-col" style="margin-top:8px;">
+  <div>
+    <p style="margin-bottom:4px;">Unfallfahrzeug:</p>
+    <div class="radio-row">
+      <label><input type="radio" name="unfall"> ja</label>
+      <label><input type="radio" name="unfall"> nein</label>
+    </div>
+  </div>
+  <div>
+    <p style="margin-bottom:4px;">Fahrzeug ist fahrbereit:</p>
+    <div class="radio-row">
+      <label><input type="radio" name="fahrbereit"> ja</label>
+      <label><input type="radio" name="fahrbereit"> nein</label>
+    </div>
+  </div>
+</div>
+<p class="legal-note">Sofern hier keine Angaben gemacht wurden, sind dem Verkäufer/der Verkäuferin nach bestem Wissen keine weiteren Mängel oder Unfallschäden bekannt.</p>
+
+<h2>§ 8 Ausschluss der Sachmängelhaftung</h2>
+<p>Das Fahrzeug wird unter Ausschluss jeglicher Sachmängelhaftung (Gewährleistung) verkauft, soweit dies nach deutschem Recht für den Verkauf zwischen Privatpersonen zulässig ist. Dies betrifft insbesondere Ansprüche des Käufers/der Käuferin wegen Sachmängeln gemäß § 434 BGB, einschließlich etwaiger Ansprüche auf Nacherfüllung, Minderung, Rücktritt oder Schadensersatz.</p>
+<p>Der Haftungsausschluss gilt nicht für:</p>
+<ol class="numbered">
+  <li>Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit,</li>
+  <li>Schäden, die auf Vorsatz oder grober Fahrlässigkeit des Verkäufers/der Verkäuferin beruhen,</li>
+  <li>Fälle, in denen der Verkäufer/die Verkäuferin einen Mangel arglistig verschwiegen hat (§ 444 BGB),</li>
+  <li>eine gesondert und ausdrücklich übernommene Garantie für die Beschaffenheit des Fahrzeugs.</li>
+</ol>
+
+<h2>§ 9 Erklärung des Käufers</h2>
+<p>Der Käufer/die Käuferin erklärt, dass ihm/ihr der Haftungsausschluss gemäß § 8 bekannt ist und er/sie das Fahrzeug in dem besichtigten und bekannten Zustand „wie besehen" erwirbt.</p>
+
+<h2>§ 10 Sondervereinbarungen</h2>
+<textarea rows="3"></textarea>
+
+<h2>§ 11 Bestätigung der Kaufpreiszahlung</h2>
+<p>Hiermit wird bestätigt, dass der Kaufpreis gemäß § 3 in voller Höhe an den Verkäufer/die Verkäuferin gezahlt wurde und das Fahrzeug vollständig samt der in § 5 aufgeführten Unterlagen und Zubehörteile übergeben wurde.</p>
+<div class="radio-row">
+  <label><input type="radio" name="zahlung_bestaetigt"> Zahlung vollständig erhalten</label>
+  <label><input type="radio" name="zahlung_bestaetigt"> Zahlung steht noch aus</label>
+</div>
+
+<h2>§ 12 Schlussbestimmungen</h2>
+<p>Änderungen und Ergänzungen dieses Vertrags bedürfen der Schriftform. Sollte eine Bestimmung dieses Vertrags unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen hiervon unberührt. Es gilt das Recht der Bundesrepublik Deutschland. Dieser Vertrag wurde in zweifacher Ausfertigung erstellt; jede Vertragspartei erhält ein von beiden Seiten unterschriebenes Exemplar.</p>
+
+<div class="signatures">
+  <div class="sig-block">
+    <div class="place-date">Ort, Datum: <input type="text"></div>
+    <span class="sig-label">Unterschrift Verkäufer/in</span>
+  </div>
+  <div class="sig-block">
+    <div class="place-date">Ort, Datum: <input type="text"></div>
+    <span class="sig-label">Unterschrift Käufer/in</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
